@@ -1,0 +1,13 @@
+# Modem configuration options
+
+# Copyright (c) 2018 Foundries.io
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig TELIT_MODEM
+	bool "Modem drivers"
+    select MODEM_MODULES
+	select MODEM_PIPE
+	select MODEM_BACKEND_UART
+	select RING_BUFFER
+	help
+	  Enable config options for modem drivers.

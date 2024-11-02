@@ -1,4 +1,8 @@
 / {
+    aliases {
+		modem = &modem;
+	};
+
     chosen {
         zephyr,console = &usb_serial;
         zephyr,shell-uart = &usb_serial;
@@ -7,4 +11,14 @@
 
 &usb_serial {
     status = "okay";
+};
+
+&uart0 {
+	current-speed = <115200>;
+	status = "okay";
+
+	modem: modem {
+		compatible = "telit,cellular-modem";
+		status = "okay";
+	};
 };
