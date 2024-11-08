@@ -24,7 +24,7 @@ static void hello_world_thread_entry(void *p1, void *p2, void *p3)
 	while(1)
     {
         k_sleep(K_MSEC(1000));
-		LOG_ERR("hello");
+		//LOG_ERR("hello");
     }
 }
 
