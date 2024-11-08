@@ -8,3 +8,23 @@
 &usb_serial {
     status = "okay";
 };
+
+&pinctrl {
+
+	uart1_default: uart1_default {
+		group1 {
+			pinmux = <UART1_TX_GPIO5>;
+			output-high;
+		};
+		group2 {
+			pinmux = <UART1_RX_GPIO7>;
+			bias-pull-up;
+		};
+	};
+};
+
+&uart1 {
+    pinctrl-0 = <&uart1_default>;
+    pinctrl-names = "default";
+    status = "okay";
+};
