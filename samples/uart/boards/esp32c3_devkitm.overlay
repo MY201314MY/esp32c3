@@ -28,3 +28,11 @@
     pinctrl-names = "default";
     status = "okay";
 };
+
+&twai {
+	status = "disabled";
+};
+
+&spi2 {
+	status = "disabled";
+};
