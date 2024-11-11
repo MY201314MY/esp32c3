@@ -1,0 +1,11 @@
+# Copyright (C) Telit Communications S.p.A. Italy - All Rights Reserved.
+# See LICENSE file in the project root for full license information.
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig MODEM_TELIT_CELLULAR_MODEM
+	default y
+	depends on DT_HAS_TELIT_CELLULAR_MODEM_ENABLED
+	bool "Telit MEX10G1 mdoem uart transmit and receive."
+	select PM_DEVICE
+	select RING_BUFFER
+	select UART_INTERRUPT_DRIVEN

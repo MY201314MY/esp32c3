@@ -1,0 +1,3 @@
+add_subdirectory_ifdef(CONFIG_MODEM_TELIT_CELLULAR_MODEM drivers/modem/)
+
+zephyr_include_directories(include)

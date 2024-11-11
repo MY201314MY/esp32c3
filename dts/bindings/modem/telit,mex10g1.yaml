@@ -1,0 +1,20 @@
+# Copyright (C) Telit Communications S.p.A. Italy - All Rights Reserved.
+
+description: Telit Cellular Modem
+
+compatible: "telit,cellular-modem"
+
+include: uart-device.yaml
+
+properties:
+  mdm-power-gpios:
+    type: phandle-array
+     
+  mdm-extern-power-gpios:
+    type: phandle-array
+
+  mdm-reset-gpios:
+    type: phandle-array
+
+  mdm-status-gpios:
+    type: phandle-array
