@@ -30,7 +30,6 @@ int _example_modem_operation(const struct shell *sh, size_t argc, char *argv[])
 		if(!strcmp(argv[1], "0"))
 		{
 			LOG_INF("operation 0");
-			tc_modem_set_power(1, K_SECONDS(10));
 		}
 		else if(!strcmp(argv[1], "1"))
 		{
