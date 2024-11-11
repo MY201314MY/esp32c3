@@ -16,7 +16,7 @@
 #include <zephyr/sys/ring_buffer.h>
 
 /* Global declarations ------------------------------------------------------ */
-
+typedef void ( *modem_transparent_callback )( struct ring_buf *ring );
 /* Global typedefs ---------------------------------------------------------- */
 struct tc_modem_data
 {
@@ -31,7 +31,14 @@ struct tc_modem_data
   struct ring_buf tx_rb;
   uint8_t txbuffer[512];
 
-  
+  struct
+  {
+    bool flag;
+    uint8_t rxbuffer[256];
+    struct ring_buf ring;
+    struct k_work work;
+    modem_transparent_callback callback;
+  } transparent;
 };
 
 struct tc_modem_config

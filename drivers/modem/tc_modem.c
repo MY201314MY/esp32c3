@@ -67,6 +67,17 @@ static void uart_cb_handler(const struct device *dev, void *user_data)
 	}
 }
 
+static void modem_cellular_transparent_handler( struct k_work *item )
+{
+  struct tc_modem_data *data =
+    CONTAINER_OF( item, struct tc_modem_data, transparent.work );
+
+  if( data->transparent.callback != NULL )
+  {
+    data->transparent.callback( &data->transparent.ring);
+  }
+}
+
 static int modem_cellular_init( const struct device *dev )
 {
   struct tc_modem_data *data = ( struct tc_modem_data * )dev->data;
@@ -85,6 +96,11 @@ static int modem_cellular_init( const struct device *dev )
 
     ring_buf_init( &data->tx_rb, sizeof( data->txbuffer ),
                    data->txbuffer );
+    
+    ring_buf_init( &data->transparent.ring, sizeof( data->transparent.rxbuffer ),
+                   data->transparent.rxbuffer );
+
+    k_work_init( &data->transparent.work, modem_cellular_transparent_handler );
   }
 
   uart_irq_callback_user_data_set(config->uart, uart_cb_handler, NULL);
