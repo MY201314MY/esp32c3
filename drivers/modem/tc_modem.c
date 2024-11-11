@@ -100,14 +100,13 @@ static int modem_cellular_init( const struct device *dev )
     ring_buf_init( &data->transparent.ring, sizeof( data->transparent.rxbuffer ),
                    data->transparent.rxbuffer );
 
-    k_work_init( &data->transparent.work, modem_cellular_transparent_handler );
+    //k_work_init( &data->transparent.work, modem_cellular_transparent_handler );
   }
 
   uart_irq_callback_user_data_set(config->uart, uart_cb_handler, NULL);
   uart_irq_rx_enable(config->uart);
 	uart_irq_tx_disable(config->uart);
 
-  pm_device_init_suspended( dev );
   return 0;
 }
 
