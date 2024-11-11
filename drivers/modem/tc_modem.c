@@ -15,7 +15,7 @@ static int modem_cellular_init( const struct device *dev );
 static bool modem_cellular_gpio_enabled( const struct gpio_dt_spec *gpio );
 
 static const struct device *modem = DEVICE_DT_GET( DT_ALIAS( modem ) );
-static const struct device *testdev = NULL;
+
 #if CONFIG_PM_DEVICE
 static int tc_modem_pm_action( const struct device *dev, enum pm_device_action action )
 {
@@ -159,8 +159,6 @@ static int modem_cellular_init( const struct device *dev )
 
   LOG_INF("addr: %p", config->uart);
 
-  //modem = dev;
-  testdev = dev;
   if(modem_cellular_gpio_enabled( &config->power_gpio ) )
   {
     gpio_pin_configure_dt( &config->power_gpio, GPIO_OUTPUT_INACTIVE );
@@ -222,12 +220,11 @@ int tc_modem_transparent_transmit( uint8_t *txbuffer, size_t size )
 {
   struct tc_modem_data *data = ( struct tc_modem_data * )modem->data;
   struct tc_modem_config *config = ( struct tc_modem_config * )modem->config;
-  struct tc_modem_config *tdev = ( struct tc_modem_config * )testdev->config;
 
-  LOG_INF("maddr: %p", config->uart);
-  LOG_INF("daddr: %p", tdev->uart);
   int ret = ring_buf_put(&data->tx_rb, txbuffer, size);
 	uart_irq_tx_enable(config->uart);
+
+  LOG_INF("ret : %d", ret);
 
   return ret;
 }
