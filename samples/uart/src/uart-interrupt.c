@@ -12,7 +12,7 @@ static struct ring_buf rx_rb;
 static uint8_t uart_txbuffer[1024] = {0};
 static struct ring_buf tx_rb;
 
-const struct device *uart0 = DEVICE_DT_GET(DT_NODELABEL(uart0));
+const struct device *uart0 = DEVICE_DT_GET(DT_NODELABEL(uart1));
 
 static void cb_handler_rx(const struct device *dev)
 {

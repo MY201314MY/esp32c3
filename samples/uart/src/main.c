@@ -51,3 +51,17 @@ SHELL_STATIC_SUBCMD_SET_CREATE(tc_modem_commands,
 
 SHELL_CMD_REGISTER(modem, &tc_modem_commands,
 		   "example for uart-test", NULL);
+
+
+/*
+commit c50777a8431157bd4ab3a2c2e2a37e8151ae07da (HEAD -> main, tag: v4.0.0-rc3, origin/main, origin/HEAD)
+Author: Dan Kalowsky <dkalowsky@amperecomputing.com>
+Date:   Fri Nov 8 13:23:24 2024 -0800
+
+    VERSION: bump for 4.0.0-rc3
+    
+    Update the VERSION file to reflect the taggingg for v4.0.0-rc3 release
+    
+    Signed-off-by: Dan Kalowsky <dkalowsky@amperecomputing.com>
+
+*/

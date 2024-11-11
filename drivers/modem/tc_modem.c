@@ -19,7 +19,7 @@ static const struct device *modem = DEVICE_DT_GET( DT_ALIAS( modem ) );
 #if CONFIG_PM_DEVICE
 static int tc_modem_pm_action( const struct device *dev, enum pm_device_action action )
 {
-  struct tc_modem_data *data = ( struct tc_modem_data * )dev->data;
+  //struct tc_modem_data *data = ( struct tc_modem_data * )dev->data;
   struct tc_modem_config *config = ( struct tc_modem_config * )dev->config;
   int ret = 0;
 
@@ -85,7 +85,7 @@ static void modem_cellular_transparent_handler( struct k_work *item )
 static void cb_handler_rx(const struct device *dev)
 {
   struct tc_modem_data *data = ( struct tc_modem_data * )modem->data;
-  struct tc_modem_config *config = ( struct tc_modem_config * )modem->config;
+  //struct tc_modem_config *config = ( struct tc_modem_config * )modem->config;
 	uint8_t rxbuffer[32] = {0};
 
 	int size = uart_fifo_read(dev, rxbuffer, sizeof(rxbuffer));
