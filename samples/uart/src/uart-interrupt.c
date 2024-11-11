@@ -14,6 +14,8 @@ static struct ring_buf tx_rb;
 
 const struct device *uart0 = DEVICE_DT_GET(DT_NODELABEL(uart0));
 
+static struct k_work work;
+
 static void cb_handler_rx(const struct device *dev)
 {
 	uint8_t rxbuffer[32] = {0};
@@ -60,6 +62,11 @@ static void uart_cb_handler(const struct device *dev, void *user_data)
 	}
 }
 
+static void modem_cellular_transparent_handler( struct k_work *work )
+{
+  LOG_INF("L:%d", __LINE__);
+}
+
 static void tc_uart_rx_thread(void *p1, void *p2, void *p3)
 {
 	ring_buf_init(&rx_rb, sizeof(uart_rxbuffer), uart_rxbuffer);
@@ -68,6 +75,8 @@ static void tc_uart_rx_thread(void *p1, void *p2, void *p3)
 	uart_irq_callback_user_data_set(uart0, uart_cb_handler, NULL);
     uart_irq_rx_enable(uart0);
 	uart_irq_tx_disable(uart0);
+
+	k_work_init( &work, modem_cellular_transparent_handler);
 
 	while(1)
     {
