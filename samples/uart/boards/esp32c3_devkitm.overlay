@@ -7,6 +7,7 @@
 	aliases {
 		modem = &modem;
 		uart-mux = &uart_mux;
+		internal-flash-storage = &flash;
 	};
 
 	/* gpio output */
@@ -17,6 +18,11 @@
 			gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
 		};
 	};
+};
+
+&flash0 {
+	label = "flash";
+	status = "okay";
 };
 
 &usb_serial {

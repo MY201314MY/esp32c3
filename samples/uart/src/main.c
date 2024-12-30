@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
 #include <zephyr/shell/shell.h>
 #include <drivers/modem/tc_modem.h>
 
@@ -34,9 +35,19 @@ int _example_modem_operation(const struct shell *sh, size_t argc, char *argv[])
 		else if(!strcmp(argv[1], "1"))
 		{
 			LOG_INF("operation 1");
-			tc_modem_transparent_transmit("hello", strlen("hello"));
 		}
 	}
+	
+	return 0;
+}
+
+int _example_reboot(const struct shell *sh, size_t argc, char *argv[])
+{
+	
+
+	LOG_WRN("REBOOT");
+	k_sleep(K_SECONDS(2));
+	sys_reboot(SYS_REBOOT_COLD);
 	
 	return 0;
 }
@@ -45,6 +56,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(tc_modem_commands,
 	SHELL_CMD(operation, NULL,
 		"example for modem operation",
 		_example_modem_operation),
+	SHELL_CMD(reboot, NULL,
+		"example reboot",
+		_example_reboot),
 	SHELL_SUBCMD_SET_END
 );
 

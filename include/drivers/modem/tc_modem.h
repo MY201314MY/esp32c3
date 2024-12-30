@@ -32,6 +32,6 @@ struct tc_modem_config
     const uint16_t power_pulse_duration_ms;
     const uint16_t startup_time_ms;
     const uint16_t shutdown_time_ms;
-}
+};
 
 #endif
