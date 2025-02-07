@@ -8,3 +8,12 @@
 &usb_serial {
     status = "okay";
 };
+
+&dma {
+    status = "okay";
+};
+
+&uart0 {
+    dmas = < &dma 0x00 >, < &dma 0x01 >;
+    dma-names = "rx", "tx";
+};
