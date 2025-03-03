@@ -99,29 +99,25 @@ static int write_port_regs(const struct device *dev, uint8_t reg,
 	uint16_t port_data;
 	int ret = 0;
 
-	LOG_DBG("reg:0x%02X -- value : 0x%04X", reg, value);
-
-	if (*cache != value) {
-		port_data = (value>>0) & 0x00FF;
-		LOG_DBG("++reg:0x%02X -- value : 0x%04X", reg, port_data);
-		ret = i2c_reg_write_byte_dt(&config->i2c, reg, port_data);
-		if (ret != 0) {
-			LOG_ERR("error writing to register 0x%X (%d)",
-				reg, ret);
-			return ret;
-		}
-
-		port_data = (value>>8) & 0x00FF;
-		LOG_DBG("++reg:0x%02X -- value : 0x%04X", reg+1, port_data);
-		ret = i2c_reg_write_byte_dt(&config->i2c, reg+1, port_data);
-		if (ret != 0) {
-			LOG_ERR("error writing to register 0x%X (%d)",
-				reg, ret);
-			return ret;
-		}
-		*cache = value;
-		LOG_DBG("Write: REG[0x%X] = 0x%X", reg, *cache);
+	
+	port_data = ((value>>0) & 0x00FF);
+	ret = i2c_reg_write_byte_dt(&config->i2c, reg, port_data);
+	if (ret != 0) {
+		LOG_ERR("error writing to register 0x%X (%d)",
+			reg, ret);
+		return ret;
 	}
+
+	port_data = ((value>>8) & 0x00FF);
+	ret = i2c_reg_write_byte_dt(&config->i2c, reg+1, port_data);
+	if (ret != 0) {
+		LOG_ERR("error writing to register 0x%X (%d)",
+			reg, ret);
+		return ret;
+	}
+	*cache = value;
+	LOG_DBG("Write: REG[0x%X] = 0x%X", reg, *cache);
+	
 
 	return ret;
 }
@@ -137,10 +133,12 @@ static inline int update_input_regs(const struct device *dev, uint16_t *buf)
 	return ret;
 }
 
-static inline int update_output_regs(const struct device *dev, uint8_t value)
+static inline int update_output_regs(const struct device *dev, uint16_t value)
 {
 	struct gpio_et6416_drv_data *const drv_data =
 		(struct gpio_et6416_drv_data *const)dev->data;
+
+	LOG_DBG("value:0x%04X", value);
 
 	return write_port_regs(dev, REG_OUTPUT,
 			&drv_data->reg_cache.output, value);
@@ -150,6 +148,8 @@ static inline int update_direction_regs(const struct device *dev, uint16_t value
 {
 	struct gpio_et6416_drv_data *const drv_data =
 		(struct gpio_et6416_drv_data *const)dev->data;
+
+	LOG_DBG("value:0x%04X", value);
 
 	return write_port_regs(dev, REG_DIRECTION,
 			&drv_data->reg_cache.dir, value);
@@ -166,24 +166,20 @@ static int setup_pin_dir(const struct device *dev, uint32_t pin, int flags)
 	if (((flags & GPIO_INPUT) != 0) && ((flags & GPIO_OUTPUT) != 0)) {
 		return -ENOTSUP;
 	}
-	LOG_INF("dir : %04X", reg_dir);
+
 	/* Update the driver data to the actual situation of the ET6416 */
 	if (flags & GPIO_OUTPUT) {
 		reg_dir &= ~BIT(pin);
-		LOG_ERR("%d", __LINE__);
 	} else if (flags & GPIO_INPUT) {
 		reg_dir |= BIT(pin);
-		LOG_ERR("%d", __LINE__);
 	} else {
 		reg_dir |= BIT(pin);
-		LOG_ERR("%d", __LINE__);
 	}
 
 	ret = update_output_regs(dev, reg_out);
 	if (ret != 0) {
 		return ret;
 	}
-	LOG_INF("dir : %04X", reg_dir);
 	ret = update_direction_regs(dev, reg_dir);
 	return ret;
 }
@@ -284,7 +280,7 @@ static int gpio_et6416_port_toggle_bits(const struct device *dev,
 {
 	struct gpio_et6416_drv_data *const drv_data =
 		(struct gpio_et6416_drv_data *const)dev->data;
-	uint8_t reg_out;
+	uint16_t reg_out;
 	int ret;
 
 	/* Can't do I2C bus operations from an ISR */
@@ -308,6 +304,8 @@ int gpio_et6416_init(const struct device *dev)
 	struct gpio_et6416_drv_data *const drv_data =
 		(struct gpio_et6416_drv_data *const)dev->data;
 	const struct gpio_et6416_config *const config = dev->config;
+	uint16_t reg_dir;
+	int ret;
 
 	if (!device_is_ready(config->i2c.bus)) {
 		LOG_ERR("%s is not ready", config->i2c.bus->name);
@@ -315,6 +313,18 @@ int gpio_et6416_init(const struct device *dev)
 	}
 
 	k_sem_init(&drv_data->lock, 1, 1);
+
+	/* Can't do I2C bus operations from an ISR */
+	if (k_is_in_isr()) {
+		return -EWOULDBLOCK;
+	}
+
+	k_sem_take(&drv_data->lock, K_FOREVER);
+
+	reg_dir = drv_data->reg_cache.dir;
+	ret = update_direction_regs(dev, reg_dir);
+
+	k_sem_give(&drv_data->lock);
 
 	return 0;
 }
@@ -339,8 +349,8 @@ static const struct gpio_driver_api gpio_fxl_driver = {
 	static struct gpio_et6416_drv_data gpio_et6416_##inst##_drvdata = {  \
 		.reg_cache = {                                                 \
 			.input = 0x0,                                          \
-			.output = 0x00,                                        \
-			.dir = 0x0,                                            \
+			.output = 0xFFFF,                                        \
+			.dir = 0xFFFF,                                            \
 		}                                                              \
 	};                                                                     \
 \
