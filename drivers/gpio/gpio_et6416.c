@@ -66,16 +66,16 @@ static int read_port_regs(const struct device *dev, uint8_t reg, uint16_t *cache
 		LOG_ERR("Error reading register 0x%02X (%d)", reg, ret);
 		return ret;
 	}
-	*cache = port_data;
-	LOG_DBG("Read: REG[0x%X] = 0x%X", reg, *cache);
 
+	*cache = port_data;
 	ret = i2c_reg_read_byte_dt(&config->i2c, reg+1, &port_data);
 	if (ret != 0) {
 		LOG_ERR("Error reading register 0x02%X (%d)", reg, ret);
 		return ret;
 	}
-	*cache = ((*cache)<<8) | port_data;
-	LOG_DBG("Read: REG[0x%X] = 0x%X", reg, *cache);
+
+	*cache = (((uint16_t)port_data)<<8) | ((*cache)&0xFF);
+	LOG_DBG("Read: REG[0x%X] = 0x%04X", reg, *cache);
 
 	return ret;
 }
