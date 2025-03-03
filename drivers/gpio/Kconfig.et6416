@@ -1,0 +1,20 @@
+# Copyright (c) 2021 Abel Sensors
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig GPIO_ET6416
+	bool "ET6416 I2C-based GPIO chip"
+	default y
+	depends on DT_HAS_TC_ET6416_ENABLED
+	depends on I2C
+	help
+	  Enable driver for ET6416 I2C-based GPIO chip.
+
+if GPIO_ET6416
+
+config GPIO_ET6416_INIT_PRIORITY
+	int "Init priority"
+	default 80
+	help
+	  Device driver initialization priority.
+
+endif # GPIO_ET6416

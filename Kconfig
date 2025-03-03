@@ -1,1 +1,1 @@
-rsource "drivers/modem/Kconfig.telit"
+rsource "drivers/gpio/Kconfig.et6416"

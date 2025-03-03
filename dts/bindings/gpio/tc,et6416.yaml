@@ -1,0 +1,16 @@
+# Copyright (c) 2021 Abel Sensors
+# SPDX-License-Identifier: Apache-2.0
+
+description: ET6416 I2C-based GPIO expander
+
+compatible: "tc,et6416"
+
+include: [gpio-controller.yaml, i2c-device.yaml]
+
+properties:
+  "#gpio-cells":
+    const: 2
+
+gpio-cells:
+  - pin
+  - flags

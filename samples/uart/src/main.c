@@ -8,10 +8,11 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/shell/shell.h>
-#include <drivers/modem/tc_modem.h>
+#include <zephyr/drivers/i2c.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
+
 
 int main(void)
 {
@@ -23,19 +24,16 @@ int main(void)
 
 int _example_modem_operation(const struct shell *sh, size_t argc, char *argv[])
 {
-	if(argc != 2)
+	static const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(i2c0));
+	uint8_t value = 0;
+	uint8_t addr = 0x20;
+	int ret = 0;
+
+
+	for(uint8_t i=0;i<8;i++)
 	{
-		return 0;
-	}else
-	{
-		if(!strcmp(argv[1], "0"))
-		{
-			LOG_INF("operation 0");
-		}
-		else if(!strcmp(argv[1], "1"))
-		{
-			LOG_INF("operation 1");
-		}
+		ret = i2c_burst_read(dev, addr, i, &value, 1);
+		LOG_INF("ret:%d -- reg:0x%02X -- value=0x%02X", ret, i, value);
 	}
 	
 	return 0;
@@ -43,8 +41,6 @@ int _example_modem_operation(const struct shell *sh, size_t argc, char *argv[])
 
 int _example_reboot(const struct shell *sh, size_t argc, char *argv[])
 {
-	
-
 	LOG_WRN("REBOOT");
 	k_sleep(K_SECONDS(2));
 	sys_reboot(SYS_REBOOT_COLD);

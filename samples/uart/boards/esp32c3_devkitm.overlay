@@ -21,7 +21,6 @@
 };
 
 &flash0 {
-	label = "flash";
 	status = "okay";
 };
 
@@ -43,7 +42,7 @@
 
 	i2c0_default: i2c0_default {
 		group1 {
-			pinmux = <I2C0_SDA_GPIO8>, <I2C0_SCL_GPIO9>;
+			pinmux = <I2C0_SDA_GPIO6>, <I2C0_SCL_GPIO7>;
 			bias-pull-up;
 			drive-open-drain;
 			output-high;
@@ -63,7 +62,7 @@
 		compatible = "telit,cellular-modem";
 		status = "okay";
 
-		mdm-power-gpios = <&fxl6408_exp1 3 GPIO_ACTIVE_HIGH>;
+		mdm-power-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
 	};
 };
 
@@ -74,20 +73,11 @@
 	pinctrl-0 = <&i2c0_default>;
 	pinctrl-names = "default";
 
-	fxl6408_exp1: fxl6408@43 {
+	et6416: et6416@20 {
 		status = "okay";
-		compatible = "fcs,fxl6408";
-		reg = <0x43>;
-		ngpios = <8>;
-		#gpio-cells = <2>;
-		gpio-controller;
-	};
-
-	fxl6408_exp2: fxl6408@44 {
-		status = "okay";
-		compatible = "fcs,fxl6408";
-		reg = <0x44>;
-		ngpios = <8>;
+		compatible = "tc,et6416";
+		reg = <0x20>;
+		ngpios = <16>;
 		#gpio-cells = <2>;
 		gpio-controller;
 	};
