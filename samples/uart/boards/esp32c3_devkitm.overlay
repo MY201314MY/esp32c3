@@ -5,35 +5,6 @@
     };
 
 	aliases {
-		modem = &modem;
-		uart-mux = &uart_mux;
-		internal-flash-storage = &flash;
-		led-3 = &led_3;
-		led-4 = &led_4;
-		led-5 = &led_5;
-		led-6 = &led_6;
-	};
-
-	/* gpio output */
-	led: led {
-		compatible = "gpio-leds";
-
-		uart_mux: uart_mux {
-			gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
-		};
-
-		led_3: led_3 {
-			gpios = <&et64c16 13 GPIO_ACTIVE_HIGH>;
-		};
-		led_4: led_4 {
-			gpios = <&et64c16 12 GPIO_ACTIVE_HIGH>;
-		};
-		led_5: led_5 {
-			gpios = <&et64c16 14 GPIO_ACTIVE_HIGH>;
-		};
-		led_6: led_6 {
-			gpios = <&et64c16 15 GPIO_ACTIVE_HIGH>;
-		};
 	};
 };
 
@@ -74,28 +45,10 @@
     status = "okay";
 };
 
-&uart0 {
-	modem: modem {
-		compatible = "telit,cellular-modem";
-		status = "okay";
-
-		mdm-power-gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
-	};
-};
-
 
 &i2c0 {
 	status = "okay";
 	clock-frequency = <I2C_BITRATE_STANDARD>;
 	pinctrl-0 = <&i2c0_default>;
 	pinctrl-names = "default";
-
-	et64c16: et64c16@20 {
-		status = "okay";
-		compatible = "tc,et64c16";
-		reg = <0x20>;
-		ngpios = <16>;
-		#gpio-cells = <2>;
-		gpio-controller;
-	};
 };
