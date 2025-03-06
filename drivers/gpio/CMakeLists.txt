@@ -2,4 +2,4 @@
 # See LICENSE file in the project root for full license information.
 # SPDX-License-Identifier: Apache-2.0
 
-zephyr_library_sources_ifdef(CONFIG_GPIO_ET6416 gpio_et6416.c)
+zephyr_library_sources_ifdef(CONFIG_GPIO_ET64C16 gpio_et64c16.c)

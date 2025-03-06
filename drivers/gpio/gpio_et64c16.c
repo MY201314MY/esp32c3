@@ -10,8 +10,8 @@
 #include <zephyr/drivers/gpio/gpio_utils.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(et6416, LOG_LEVEL_DBG);
-#define DT_DRV_COMPAT             tc_et6416
+LOG_MODULE_REGISTER(et64c16, LOG_LEVEL_DBG);
+#define DT_DRV_COMPAT             tc_et64c16
 
 /* Register definitions */
 /* Register definitions */
@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(et6416, LOG_LEVEL_DBG);
 			GPIO_OUTPUT_INIT_HIGH | GPIO_ACTIVE_HIGH | GPIO_ACTIVE_LOW)
 
 /** Configuration data*/
-struct gpio_et6416_config {
+struct gpio_et64c16_config {
 	/* gpio_driver_config needs to be first */
 	struct gpio_driver_config common;
 
@@ -33,7 +33,7 @@ struct gpio_et6416_config {
 };
 
 /** Runtime driver data */
-struct gpio_et6416_drv_data {
+struct gpio_et64c16_drv_data {
 	/* gpio_driver_data needs to be first */
 	struct gpio_driver_data common;
 
@@ -49,7 +49,7 @@ struct gpio_et6416_drv_data {
 /**
  * @brief Read the port of certain register function.
  *
- * @param dev Device struct of the ET6416.
+ * @param dev Device struct of the ET64C16.
  * @param reg Register to read.
  * @param cache Pointer to the cache to be updated after successful read.
  *
@@ -57,7 +57,7 @@ struct gpio_et6416_drv_data {
  */
 static int read_port_regs(const struct device *dev, uint8_t reg, uint16_t *cache)
 {
-	const struct gpio_et6416_config *const config = dev->config;
+	const struct gpio_et64c16_config *const config = dev->config;
 	uint8_t port_data;
 	int ret;
 
@@ -83,7 +83,7 @@ static int read_port_regs(const struct device *dev, uint8_t reg, uint16_t *cache
 /**
  *  @brief Write to the port registers of certain register function.
  *
- * @param dev Device struct of the ET6416.
+ * @param dev Device struct of the ET64C16.
  * @param reg Register to write into. Possible values:  REG_DEVICE_ID_CTRL,
  * REG_OUTPUT, REG_DIRECTION, REG_PUD_SEL, REG_PUD_EN, REG_OUTPUT_HIGH_Z and
  * REG_INPUT_DEFAULT.
@@ -95,7 +95,7 @@ static int read_port_regs(const struct device *dev, uint8_t reg, uint16_t *cache
 static int write_port_regs(const struct device *dev, uint8_t reg,
 			   uint16_t *cache, uint16_t value)
 {
-	const struct gpio_et6416_config *const config = dev->config;
+	const struct gpio_et64c16_config *const config = dev->config;
 	uint16_t port_data;
 	int ret = 0;
 
@@ -124,8 +124,8 @@ static int write_port_regs(const struct device *dev, uint8_t reg,
 
 static inline int update_input_regs(const struct device *dev, uint16_t *buf)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 	int ret = read_port_regs(dev, REG_INPUT_VALUE,
 				 &drv_data->reg_cache.input);
 	*buf = drv_data->reg_cache.input;
@@ -135,8 +135,8 @@ static inline int update_input_regs(const struct device *dev, uint16_t *buf)
 
 static inline int update_output_regs(const struct device *dev, uint16_t value)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 
 	LOG_DBG("value:0x%04X", value);
 
@@ -146,8 +146,8 @@ static inline int update_output_regs(const struct device *dev, uint16_t value)
 
 static inline int update_direction_regs(const struct device *dev, uint16_t value)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 
 	LOG_DBG("value:0x%04X", value);
 
@@ -157,8 +157,8 @@ static inline int update_direction_regs(const struct device *dev, uint16_t value
 
 static int setup_pin_dir(const struct device *dev, uint32_t pin, int flags)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 	uint16_t reg_dir = drv_data->reg_cache.dir;
 	uint16_t reg_out = drv_data->reg_cache.output;
 	int ret;
@@ -167,7 +167,7 @@ static int setup_pin_dir(const struct device *dev, uint32_t pin, int flags)
 		return -ENOTSUP;
 	}
 
-	/* Update the driver data to the actual situation of the ET6416 */
+	/* Update the driver data to the actual situation of the ET64C16 */
 	if (flags & GPIO_OUTPUT) {
 		reg_dir &= ~BIT(pin);
 	} else if (flags & GPIO_INPUT) {
@@ -184,11 +184,11 @@ static int setup_pin_dir(const struct device *dev, uint32_t pin, int flags)
 	return ret;
 }
 
-static int gpio_et6416_pin_config(const struct device *dev, gpio_pin_t pin,
+static int gpio_et64c16_pin_config(const struct device *dev, gpio_pin_t pin,
 				   gpio_flags_t flags)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 	int ret;
 
 	/* Check if supported flag is set */
@@ -213,10 +213,10 @@ done:
 	return ret;
 }
 
-static int gpio_et6416_port_get_raw(const struct device *dev, uint32_t *value)
+static int gpio_et64c16_port_get_raw(const struct device *dev, uint32_t *value)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 	uint16_t buf = 0;
 	int ret = 0;
 
@@ -238,11 +238,11 @@ done:
 	return ret;
 }
 
-static int gpio_et6416_port_set_masked_raw(const struct device *dev,
+static int gpio_et64c16_port_set_masked_raw(const struct device *dev,
 						uint32_t mask, uint32_t value)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 	uint16_t reg_out;
 	int ret;
 
@@ -263,23 +263,23 @@ static int gpio_et6416_port_set_masked_raw(const struct device *dev,
 	return ret;
 }
 
-static int gpio_et6416_port_set_bits_raw(const struct device *dev,
+static int gpio_et64c16_port_set_bits_raw(const struct device *dev,
 					  uint32_t mask)
 {
-	return gpio_et6416_port_set_masked_raw(dev, mask, mask);
+	return gpio_et64c16_port_set_masked_raw(dev, mask, mask);
 }
 
-static int gpio_et6416_port_clear_bits_raw(const struct device *dev,
+static int gpio_et64c16_port_clear_bits_raw(const struct device *dev,
 						uint32_t mask)
 {
-	return gpio_et6416_port_set_masked_raw(dev, mask, 0);
+	return gpio_et64c16_port_set_masked_raw(dev, mask, 0);
 }
 
-static int gpio_et6416_port_toggle_bits(const struct device *dev,
+static int gpio_et64c16_port_toggle_bits(const struct device *dev,
 					 uint32_t mask)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
 	uint16_t reg_out;
 	int ret;
 
@@ -299,11 +299,11 @@ static int gpio_et6416_port_toggle_bits(const struct device *dev,
 	return ret;
 }
 
-int gpio_et6416_init(const struct device *dev)
+int gpio_et64c16_init(const struct device *dev)
 {
-	struct gpio_et6416_drv_data *const drv_data =
-		(struct gpio_et6416_drv_data *const)dev->data;
-	const struct gpio_et6416_config *const config = dev->config;
+	struct gpio_et64c16_drv_data *const drv_data =
+		(struct gpio_et64c16_drv_data *const)dev->data;
+	const struct gpio_et64c16_config *const config = dev->config;
 	uint16_t reg_dir;
 	int ret;
 
@@ -330,23 +330,23 @@ int gpio_et6416_init(const struct device *dev)
 }
 
 static const struct gpio_driver_api gpio_fxl_driver = {
-	.pin_configure = gpio_et6416_pin_config,
-	.port_get_raw = gpio_et6416_port_get_raw,
-	.port_set_masked_raw = gpio_et6416_port_set_masked_raw,
-	.port_set_bits_raw = gpio_et6416_port_set_bits_raw,
-	.port_clear_bits_raw = gpio_et6416_port_clear_bits_raw,
-	.port_toggle_bits = gpio_et6416_port_toggle_bits,
+	.pin_configure = gpio_et64c16_pin_config,
+	.port_get_raw = gpio_et64c16_port_get_raw,
+	.port_set_masked_raw = gpio_et64c16_port_set_masked_raw,
+	.port_set_bits_raw = gpio_et64c16_port_set_bits_raw,
+	.port_clear_bits_raw = gpio_et64c16_port_clear_bits_raw,
+	.port_toggle_bits = gpio_et64c16_port_toggle_bits,
 };
 
-#define GPIO_ET6416_DEVICE_INSTANCE(inst)                                     \
-	static const struct gpio_et6416_config gpio_et6416_##inst##_cfg = {  \
+#define GPIO_ET64C16_DEVICE_INSTANCE(inst)                                     \
+	static const struct gpio_et64c16_config gpio_et64c16_##inst##_cfg = {  \
 		.common = {                                                    \
 			.port_pin_mask = GPIO_PORT_PIN_MASK_FROM_DT_INST(inst),\
 		},                                                             \
 		.i2c = I2C_DT_SPEC_INST_GET(inst)                              \
 	};                                                                     \
 \
-	static struct gpio_et6416_drv_data gpio_et6416_##inst##_drvdata = {  \
+	static struct gpio_et64c16_drv_data gpio_et64c16_##inst##_drvdata = {  \
 		.reg_cache = {                                                 \
 			.input = 0x0,                                          \
 			.output = 0xFFFF,                                        \
@@ -354,10 +354,10 @@ static const struct gpio_driver_api gpio_fxl_driver = {
 		}                                                              \
 	};                                                                     \
 \
-	DEVICE_DT_INST_DEFINE(inst, gpio_et6416_init, NULL,                   \
-		&gpio_et6416_##inst##_drvdata,                                \
-		&gpio_et6416_##inst##_cfg, POST_KERNEL,                       \
-		CONFIG_GPIO_ET6416_INIT_PRIORITY,                             \
+	DEVICE_DT_INST_DEFINE(inst, gpio_et64c16_init, NULL,                   \
+		&gpio_et64c16_##inst##_drvdata,                                \
+		&gpio_et64c16_##inst##_cfg, POST_KERNEL,                       \
+		CONFIG_GPIO_ET64C16_INIT_PRIORITY,                             \
 		&gpio_fxl_driver);
 
-DT_INST_FOREACH_STATUS_OKAY(GPIO_ET6416_DEVICE_INSTANCE)
+DT_INST_FOREACH_STATUS_OKAY(GPIO_ET64C16_DEVICE_INSTANCE)

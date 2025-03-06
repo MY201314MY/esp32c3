@@ -1,1 +1,1 @@
-rsource "drivers/gpio/Kconfig.et6416"
+rsource "drivers/gpio/Kconfig.et64c16"

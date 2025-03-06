@@ -73,9 +73,9 @@
 	pinctrl-0 = <&i2c0_default>;
 	pinctrl-names = "default";
 
-	et6416: et6416@20 {
+	et64c16: et64c16@20 {
 		status = "okay";
-		compatible = "tc,et6416";
+		compatible = "tc,et64c16";
 		reg = <0x20>;
 		ngpios = <16>;
 		#gpio-cells = <2>;

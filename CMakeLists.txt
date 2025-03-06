@@ -1,3 +1,3 @@
-add_subdirectory_ifdef(CONFIG_GPIO_ET6416 drivers/gpio)
+add_subdirectory_ifdef(CONFIG_GPIO_ET64C16 drivers/gpio)
 
 zephyr_include_directories(include)
