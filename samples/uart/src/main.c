@@ -21,8 +21,14 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 static const struct device *const wdt = DEVICE_DT_GET(DT_ALIAS(watchdog0));
 static int wdt_channel_id;
-#define WDT_MAX_WINDOW  4000U
+#define WDT_MAX_WINDOW  8000U
 #define WDT_MIN_WINDOW  0U
+
+static void wdt_callback(const struct device *wdt_dev, int channel_id)
+{
+	printk("watch dog channel %d, ready to reset...\n", channel_id);
+	k_sleep(K_SECONDS(2));
+}
 
 int tc_watch_dog_init(void)
 {
@@ -41,6 +47,9 @@ int tc_watch_dog_init(void)
 		.window.min = WDT_MIN_WINDOW,
 		.window.max = WDT_MAX_WINDOW,
 	};
+
+	/* Set up watchdog callback. */
+	wdt_config.callback = wdt_callback;
 
 	wdt_channel_id = wdt_install_timeout(wdt, &wdt_config);
 	if (wdt_channel_id == -ENOTSUP) {
@@ -68,6 +77,26 @@ void tc_watch_dog_feed()
 	wdt_feed(wdt, wdt_channel_id);
 }
 
+void tc_watch_dog_set_enable(bool enable)
+{
+	int ret = -1;
+
+	if(enable)
+	{
+		LOG_INF("watch dog enabled.");
+		ret = wdt_setup(wdt, WDT_OPT_PAUSE_HALTED_BY_DBG);
+		if (ret < 0) {
+			LOG_ERR("Watchdog setup error, ret=%d\n", ret);
+		}
+	}else{
+		LOG_INF("watch dog disabled.");
+		ret = wdt_disable(wdt);
+		if (ret < 0) {
+			LOG_ERR("Watchdog setup error, ret=%d\n", ret);
+		}
+	}
+}
+
 int main(void)
 {
 	k_sleep(K_SECONDS(2));
@@ -77,7 +106,7 @@ int main(void)
 
 	while(1)
 	{
-		tc_watch_dog_feed();
+		//tc_watch_dog_feed();
 		k_sleep(K_MSEC(1000));
 	}
 
@@ -130,6 +159,12 @@ int _example_modem_operation(const struct shell *sh, size_t argc, char *argv[])
 		/* block */
 		memset(name, 0, sizeof(name));
 		LOG_WRN("memset to zero.");
+	}else if(3 == operation)
+	{
+		tc_watch_dog_set_enable(true);
+	}else if(4 == operation)
+	{
+		tc_watch_dog_set_enable(false);
 	}
 
 	
