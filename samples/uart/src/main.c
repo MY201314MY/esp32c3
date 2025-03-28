@@ -21,14 +21,8 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_DBG);
 
 static const struct device *const wdt = DEVICE_DT_GET(DT_ALIAS(watchdog0));
 static int wdt_channel_id;
-#define WDT_MAX_WINDOW  8000U
+#define WDT_MAX_WINDOW  4000U
 #define WDT_MIN_WINDOW  0U
-
-
-static void wdt_callback(const struct device *wdt_dev, int channel_id)
-{
-	printk("watchdog channel %d, ready to reset...\n", channel_id);
-}
 
 int tc_watch_dog_init(void)
 {
@@ -47,9 +41,6 @@ int tc_watch_dog_init(void)
 		.window.min = WDT_MIN_WINDOW,
 		.window.max = WDT_MAX_WINDOW,
 	};
-
-	/* Set up watchdog callback. */
-	wdt_config.callback = wdt_callback;
 
 	wdt_channel_id = wdt_install_timeout(wdt, &wdt_config);
 	if (wdt_channel_id == -ENOTSUP) {
